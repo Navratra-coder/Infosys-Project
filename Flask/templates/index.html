@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadhaar Fraud Detection</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+    <style>
+        /* Add your custom styles here */
+        body {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lottie-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+
+    {% if get_flashed_messages() %}
+    <header>
+        <div class="alert alert-primary mb-0 text-center" role="alert">
+            {{ get_flashed_messages() | join(" ") }}
+        </div>
+    </header>
+    {% endif %}
+
+    <main class="container py-5 text-center">
+        {% block main %}
+        {% if 'user_id' in session %}
+            <div class="upload-container">
+                <h2>Upload Files</h2>
+                <form id="upload-form" method="POST" action="/" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="zipfile"><i class="fas fa-file-archive"></i> Upload ZIP File (Images):</label>
+                        <div class="custom-file-upload">
+                            <input type="file" id="zipfile" name="zipfile" accept=".zip" required>
+                            <label for="zipfile">Choose File</label>
+                            <span id="zip-file-name" class="file-name">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="excelfile"><i class="fas fa-file-excel"></i> Upload Excel File (User Data):</label>
+                        <div class="custom-file-upload">
+                            <input type="file" id="excelfile" name="excelfile" accept=".xlsx" required>
+                            <label for="excelfile">Choose File</label>
+                            <span id="excel-file-name" class="file-name">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="threshold"><i class="fas fa-sliders-h"></i> Matching Threshold:</label>
+                        <input type="range" id="threshold" name="threshold" min="0" max="100" value="{{ overall_threshold }}">
+                        <span id="thresholdValue">{{ overall_threshold }}</span>
+                    </div>
+                    <div class="form-group">
+                        <div id="loading-indicator" style="display: none;"></div>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit" class="btn btn-primary process-button">Process Files</button>
+                    </div>
+                </form>
+            </div>
+        {% else %}
+            <div class="container">
+                <section class="hero">
+                    <div class="hero-image"> <!--style="background-image: url('/static/kisaan_family.jpg');">-->
+                        <div class="hero-overlay">
+                            <div class="hero-content">
+                                <h1>Aadhaar Fraud Detection System</h1>
+                                <p>Prevent fraud and ensure authenticity with our advanced Aadhaar verification system.</p>
+                                <a href="/login" class="btn btn-primary get-started-btn">Get Started</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="features mt-5">
+                    <h2>Key Features</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">ACCURATE VERIFICATION</h5>
+                                    <p class="card-text">Our system uses advanced Classification, Detection, and OCR algorithms to accurately verify Aadhaar information.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">EASY TO USE</h5>
+                                    <p class="card-text">Simply upload your Aadhaar images and data, and our system will certainly do the rest.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">SECURE AND RELIABLE</h5>
+                                    <p class="card-text">We save your password using hashing and do not share user data with any third party.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        {% endif %}
+        {% endblock %}
+    </main>
+
+    <footer class="mb-5">
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Adapted from https://stackoverflow.com/a/10162353
+                const html =
+                    "<!DOCTYPE " +
+                    document.doctype.name +
+                    (document.doctype.publicId
+                        ? ' PUBLIC "' + document.doctype.publicId + '"'
+                        : "") +
+                    (!document.doctype.publicId && document.doctype.systemId
+                        ? " SYSTEM"
+                        : "") +
+                    (document.doctype.systemId
+                        ? ' "' + document.doctype.systemId + '"'
+                        : "") +
+                    ">\n" +
+                    document.documentElement.outerHTML;
+                document.querySelector(
+                    'form[action="https://validator.w3.org/check"] > input[name="fragment"]'
+                ).value = html;
+            });
+        </script>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const uploadForm = document.getElementById("upload-form");
+        uploadForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            // Show the loading indicator
+            document.getElementById('loading-indicator').style.display = "block";
+
+            // Load and play the Lottie animation
+            lottie.loadAnimation({
+                container: document.getElementById('loading-indicator'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'static/Loading.json'
+            });
+
+            const xhr = new XMLHttpRequest();
+
+            // Remove the progress update from xhr.upload.onprogress
+            xhr.upload.onprogress = function (event) {
+                // This function is now empty, as we're not updating a progress bar
+            };
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        // Hide the loading indicator
+                        document.getElementById('loading-indicator').style.display = "none";
+
+                        const response = JSON.parse(xhr.responseText);
+                        if (response && response.redirect) {
+                            window.location.href = response.redirect;
+                        } else {
+                            window.location.href = "/results";
+                        }
+                    } catch (e) {
+                        window.location.href = "/results";
+                    }
+                } else {
+                    console.error("Error:", xhr.status, xhr.statusText);
+                    // Hide the loading indicator on error
+                    document.getElementById('loading-indicator').style.display = "none";
+                }
+            };
+
+            xhr.onerror = function () {
+                console.error("Network Error occurred.");
+                // Hide the loading indicator on error
+                document.getElementById('loading-indicator').style.display = "none";
+            };
+
+            xhr.open("POST", "/");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.send(formData);
+        });
+
+        const slider = document.getElementById("threshold");
+        const output = document.getElementById("thresholdValue");
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+        }
+
+        // Update file name display on file selection
+        document.getElementById('zipfile').addEventListener('change', function() {
+            document.getElementById('zip-file-name').textContent = this.files[0] ? this.files[0].name : 'No file chosen';
+        });
+        document.getElementById('excelfile').addEventListener('change', function() {
+            document.getElementById('excel-file-name').textContent = this.files[0] ? this.files[0].name : 'No file chosen';
+        });
+    });
+</script>
+<script>
+    var animation = lottie.loadAnimation({
+        container: document.getElementById('lottie-container'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'static/Background.json'
+    });
+</script>
+</body>

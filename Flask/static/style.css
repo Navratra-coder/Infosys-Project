@@ -1,0 +1,264 @@
+/* Hero Section */
+.hero {
+    width: 100%;
+    position: relative;
+    text-align: center;
+    background-color: transparent;
+    color: #fff;
+    padding: 100px 0;
+}
+
+.hero-image {
+    width: 100%;
+    position: relative;
+    background-image: url('/static/kisaan_family.jpg');
+    background-size: cover; 
+    background-position: center; /* Centers the image */
+    height: 600px;
+    /* If you have a background color on the hero-image, remove it, or set it to transparent */
+    background-color: transparent;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(40, 67, 198, 0.5); /* Semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-content {
+    padding: 40px;
+}
+
+.hero-content h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.get-started-btn {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border-radius: 25px; /* Rounded corners */
+    border: none;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.get-started-btn:hover {
+    background-color: #0056b3;
+}
+
+#uploadForm {
+    width: 100%; /* Adjust as needed */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f7f6fc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(243, 2, 2, 0.1);
+}
+
+.upload-option, .threshold-option {
+    margin-bottom: 20px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.upload-input {
+    display: none; /* Hide default input */
+}
+
+.file-name {
+    display: inline-block;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.upload-input + .file-name {
+    margin-left: 10px;
+}
+
+#threshold {
+    width: 40%;
+}
+
+#thresholdValue {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.process-button {
+    display: block;
+    width: auto; /* Make button fit content */
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Previous styles */
+
+.custom-file-upload {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px; /* Add some space above */
+}
+
+.custom-file-upload input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-file-upload label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.custom-file-upload label:hover {
+    background-color: #0056b3;
+}
+
+.process-button:hover {
+    background-color: #0056b3;
+}
+
+/* Login/Register Container */
+.login-container, .register-container {
+    display: flex;
+    width: 80%; /* Adjust as needed */
+    margin: 50px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Form Styles */
+.login-form, .register-form {
+    flex: 1;
+    padding: 40px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header i {
+    font-size: 3em;
+    color: #007bff; /* Example icon color */
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-control {
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+/* Background Styles */
+.login-background, .register-background {
+    flex: 1;
+    background-image: url('/static/woman_welcoming.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Add this */
+}
+
+.login-background::before, .register-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+}
+
+.welcome-text {
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+/* Button Styles */
+.btn{
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-right: 20px; /* Add some space between buttons */
+    margin-bottom: 10px;
+    }
+
+.button-container {
+    display: grid;
+    gap: 10px; /* Add space between buttons */
+    justify-content: center;
+    width: 100%; /* Ensure it takes full width */
+}
+
+/* Form Footer */
+.form-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.chart-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns, each taking equal space */
+    gap: 20px; /* Space between the boxes */
+    margin-top: 20px; /* Space between the table and the charts */
+}
+
+.chart-box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2); /* Vibrant background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    perspective: 800px;
+}
+
+canvas {
+    width: 100%; /* Make canvas fill the box */
+    height: 300px; /* Adjust height as needed */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transform: rotateX(10deg) rotateY(10deg);
+}

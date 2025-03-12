@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="git a=device-width, initial-scale=1.0">
+    <title>Aadhaar Fraud Detection Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Aadhaar Fraud Detection Results</h1>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger logout-button">Logout</a>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Serial No.</th>
+                    <th>Filename</th>
+                    <th>Name Match Score</th>
+                    <th>UID Match Score</th>
+                    <th>Address Match Score</th>
+                    <th>Overall Matching Score</th>
+                    <th>Remarks (based on your threshold)</th>
+                    <th>Upload Date & Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if results %}
+                    {% for result in results %}
+                        <tr>
+                            <td>{{ result.id}}</td>
+                            <td>{{ result.filename }}</td>
+                            <td>{{ result.name_score }}</td>
+                            <td>{{ result.uid_score }}</td>
+                            <td>{{ result.address_score }}</td>
+                            <td>{{ result.score }}</td>
+                            <td>{{ result.remarks }}</td>
+                            <td>{{ result.upload_date }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">No results found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+            <a href="/" class="btn btn-secondary btn-block mt-3">Back to Upload</a>
+        <div class="button-container">
+            <a href="{{ url_for('download_excel') }}" class="btn btn-primary">Download Updated Excel</a>
+            <button id="showAnalyticsBtn" class="btn btn-info">Show Analytics</button>
+        </div>
+
+    <table>
+        </table>
+
+    <div id="analyticsCharts" style="display: none;">
+        <div class="chart-container">
+            <div class="chart-box">
+                <canvas id="scoreDistributionChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="matchScoreComparisonChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="remarksBreakdownChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+        // Access the results_list passed from results.html
+        const results = JSON.parse('{{ results_list | tojson | safe }}');
+
+        // Overall Matching Score Distribution (Bar Chart)
+        const scores = results.map(item => item['Overall Score']); // Corrected property name
+
+        // Create bins
+        const bins = {};
+        scores.forEach(score => {
+            const bin = Math.floor(score / 10) * 10;
+            bins[bin] = (bins[bin] || 0) + 1;
+        });
+
+        const labels = Object.keys(bins).sort((a, b) => a - b);
+        const data = labels.map(bin => bins[bin]);
+        const ctx1 = document.getElementById('scoreDistributionChart').getContext('2d'); 
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Overall Matching Score Distribution',
+                    data: data,
+                    backgroundColor: 'rgba(76, 175, 80, 0.7)', // Vibrant green
+                    borderColor: 'rgba(76, 175, 80, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { // Add y-axis title
+                            display: true,
+                            text: 'Frequency'
+                        }
+                    },
+                    x: {
+                        title: { // Add x-axis title
+                            display: true,
+                            text: 'Score Range'
+                        }
+                    }
+                },
+                plugins: {
+                    title: { // Add chart title
+                        display: true,
+                        text: 'Overall Matching Score Distribution',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            }
+        });
+
+        // Match Score Comparison (Radar Chart)
+        const radarLabels = ['Name Match Score', 'UID Match Score', 'Address Match Score']; 
+        const radarDatasets = results.map(item => ({
+            label: item['SrNo'], // Corrected property name
+            data: [item['Name Match Score'], item['UID Match Score'], item['Address Match Score']], 
+            backgroundColor: 'rgba(156, 39, 176, 0.5)', // Vibrant purple
+            borderColor: 'rgba(156, 39, 176, 1)',
+            borderWidth: 1
+        }));
+
+        const ctx2 = document.getElementById('matchScoreComparisonChart').getContext('2d'); 
+        new Chart(ctx2, {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: radarDatasets
+            },
+            options: {
+                scale: {
+                    ticks: {
+                        beginAtZero: true,
+                        max: 100
+                    },
+                    title: { // Add scale title
+                        display: true,
+                        text: 'Match Scores'
+                    }
+                },
+                plugins: {
+                    title: { // Add chart title
+                        display: true,
+                        text: 'Match Score Comparison',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            }
+        });
+
+        // Remarks Breakdown (Pie Chart)
+        const Remarks = {};
+        results.forEach(item => {
+            Remarks[item['Remarks']] = (Remarks[item['Remarks']]||0) + 1; 
+        });
+
+        const pieLabels = Object.keys(Remarks);
+        const pieData = pieLabels.map(Remark => Remarks[Remark]);
+
+        const ctx3 = document.getElementById('remarksBreakdownChart').getContext('2d'); 
+        new Chart(ctx3, {
+            type: 'pie',
+            data: {
+                labels: pieLabels,
+                datasets: [{
+                    label: 'Remarks Breakdown', // Add label here
+                    data: pieData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)', // Vibrant red
+                        'rgba(54, 162, 235, 0.7)', // Vibrant blue
+                        'rgba(255, 206, 86, 0.7)', // Vibrant yellow
+                        // Add more colors as needed
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        // Add more border colors as needed
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    title: { // Add chart title
+                        display: true,
+                        text: 'Remarks Breakdown',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    legend: { // Show legend
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        const showAnalyticsBtn = document.getElementById('showAnalyticsBtn');
+        const analyticsCharts = document.getElementById('analyticsCharts');
+
+        showAnalyticsBtn.addEventListener('click', function() {
+            if (analyticsCharts.style.display === 'none') {
+                analyticsCharts.style.display = 'block';
+            } else {
+                analyticsCharts.style.display = 'none';
+            }
+        });
+        
+    </script>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
